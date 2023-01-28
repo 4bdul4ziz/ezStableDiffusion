@@ -25,19 +25,14 @@ lms = LMSDiscreteScheduler(
     beta_schedule="scaled_linear"
 )
 
-modelid = "CompVis/stable-diffusion-v1-4"
-device = "cpu"
-pipe = StableDiffusionPipeline.from_pretrained(
-    "CompVis/stable-diffusion-v1-4",
-    scheduler=lms,
-    use_auth_token=auth_token,
-    from_tf=True,
-    cache_dir=os.getenv("cache_dir", "./models")
-).to(device)
+pipe = StableDiffusionPipeline.from_pretrained("runwayml/stable-diffusion-v1-5")
+pipe = pipe.to("mps")
+pipe.enable_attention_slicing()
+
 
 def generate():
-    with autocast(device):
-        image = pipe(prompt.get(), guidance_scale=9)["sample"][0]
+    _ = pipe(prompt.get(), num_inference_steps=1)
+    image = pipe(prompt).images[0]
     image.save('generated.png')
     img = ImageTk.PhotoImage(image)
     lmain.configure(image=img)
