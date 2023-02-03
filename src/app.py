@@ -30,6 +30,7 @@ pipe = pipe.to("mps")
 pipe.enable_attention_slicing()
 
 
+
 def generate():
     _ = pipe(prompt.get(), num_inference_steps=1)
     image = pipe(prompt).images[0]
